@@ -1,0 +1,29 @@
+{
+    "quotes": [
+        {
+            "id" : 1,
+            "quote" : "When we are no longer able to change a situation, we are challenged to change ourselves.",
+            "author" : "Viktor E. Frankl",
+            "publication" : "Man's Search for Meaning"
+        },
+        {
+            "id" : 2,
+            "quote" : "Do not let the memories of your past limit the potential of your future. There are no limits to what you can achieve on your journey through life, except in your mind.",
+            "author" : "Roy T. Bennett",
+            "publication" : "The Light in the Heart"
+        },
+        {
+            "id" : 3,
+            "quote" : "Inspiration fires you up; motivation keeps you burning",
+            "author" : "Stuart Aken",
+            "publication" : "Unknown"
+        },
+        {
+            "id" : 4,
+            "quote" : "The harder the conflict, the more glorious the triumph.",
+            "author" : "Thomas Paine",
+            "publication" : "Unknown"
+        }
+
+    ]
+}
