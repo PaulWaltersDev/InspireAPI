@@ -7,7 +7,7 @@ The following requests are supported -
 
 ## GET
 
-`GET \quotes`
+`GET /quotes`
 
 - returns a single quote (picked at random from the file Quotes.csv from [Akhil Tak's Inspirational Quotes Project](https://github.com/akhiltak/inspirational-quotes)) in the json format -
 
