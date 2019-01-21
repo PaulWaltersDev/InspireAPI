@@ -1,13 +1,19 @@
 const express = require("express")
 const app = express();
 const lineReader = require("line-reader");
+const bodyParser = require("body-parser");
 
 // const quotes = require("./quotes.json");
 const port = process.env.port || 8080;
 const quotesFileName = "./Quotes.csv";
 //quotes from https://github.com/akhiltak/inspirational-quotes
 
-app.use(express.json());
+const router = express.Router();
+
+app.use(bodyParser.json());
+app.use("/api/inspire", router);
+
+
 var quotes = null;
 
 const getQuotes = (quotesFileName) => {
@@ -15,54 +21,85 @@ const getQuotes = (quotesFileName) => {
 
         let quotesList = new Array();
         let i = 1;
+        let targetQuoteTypesArray = ["motivational",
+                                        "courage",
+                                        "inspirational",
+                                        "failure",
+                                        "leadership",
+                                        "learning",
+                                        "positive",
+                                        "thankful",
+                                        "wisdom"];
 
         lineReader.eachLine(quotesFileName, (line, last) => {
-                    line = line.split(";",3);
-                    if (line[2]=="motivational") quotesList.push({ id: i, quote : line[0], author : line[1]});
-                    i++;
-        }, ((err) => {
+            line = line.split(";",3);
+            if (targetQuoteTypesArray.includes(line[2]))
+            {
+                quotesList.push({ id: i, quote : line[0], author : line[1]});
+                i++;
+            };
+        }, (err) => {
             if(err) reject(err);
             console.log("quotes loaded - done!");
-            })
-        );
-
-        resolve(quotesList);
+            console.log(`QuotesList.length = ${quotesList.length}`);
+            resolve(quotesList);
+        });
     });
 };
 
-app.get("/", (req, res) => {
-    res.redirect("/quote");
+router.get("/", (req, res) => {
+    res.redirect("quote");
 });
 
-app.get("/quote", (req, res) => {
+router.get("/quote", (req, res) => {
 //    console.log(quotes);
     res.json(quotes[Math.floor((Math.random()*quotes.length)+1)]);
 });
 
-app.post("/", (req, res) => {
-    res.redirect("/quote");
+router.get("/quote/:id", (req, res) => {
+    
+    if(!/^\d+$/.test(req.params.id)){
+        return res.status(400).send("The id must be an integer.");
+    };
+
+    const quotesId = parseInt(req.params.id);
+    
+    console.log(`quotesId = ${quotesId}`);
+
+    let quote = quotes.filter((q) => q.id === quotesId)[0];
+
+    if(!quote){
+        return res.status(404).send("A quote with that id does not exist");
+    }
+
+    res.json(quote);
+})
+
+router.post("/", (req, res) => {
+    res.redirect("quote");
 });
 
-app.post("/quote", (req, res) => {
+router.post("/quote", (req, res) => {
 
     console.log(req.body);
 
     if(!req.body.quote || !req.body.author) return res.status(500).send("Empty request fields");
 
     let quote = {
-        id : quotes.quotes.length + 1,
+        id : quotes.length + 1,
         quote : req.body.quote,
         author : req.body.author,
     };
 
-    quotes.quotes.push(quote);
+    quotes.push(quote);
     
-    console.log(quotes.quotes);
     res.json(quote);
 }); 
 
-app.put("/quote", (req, res) => {
 
+router.put("/quote", (req, res) => {
+
+    if(!req.body) return res.status(400).send("No request body");
 
     if(!req.body.id ||
         !req.body.quote ||
@@ -70,9 +107,9 @@ app.put("/quote", (req, res) => {
         return res.status(500).send("Empty request fields");
 
     if(req.body.id < 1 || 
-        req.body.id > quotes.quotes.length) return res.status(500).send("id out of bounds");
+        req.body.id > quotes.length) return res.status(500).send("id out of bounds");
 
-    const new_quote = quotes.quotes[parseInt(req.body.id)-1];
+    const new_quote = quotes[parseInt(req.body.id)-1];
 
 
     new_quote.quote = req.body.quote;
@@ -82,7 +119,8 @@ app.put("/quote", (req, res) => {
 
 });
 
-app.delete("/quote/:id", (req, res) => {
+
+router.delete("/quote/:id", (req, res) => {
     if(!req.params.id) return res.status(404).send("Please include a quote id");
 
     if(!quotes[parseInt(req.params.id)-1]){
