@@ -1,7 +1,7 @@
 # InspireAPI
 A project to learn Javascript, NodeJS and ExpressJS by creating an API that sends out motivational quotes. Released under an MIT licence.
 
-Currently, all requests are made to a single endpoint */quotes*.
+Currently, all requests are made to a single endpoint *api/inspire/quotes*.
 
 The following requests are supported -
 
