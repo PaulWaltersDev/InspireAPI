@@ -28,4 +28,8 @@ For example -
 }
 ```
 
+`GET /quotes/:id`
+
+- returns a quote corresponding to the quote ID entered in as a parameter (the "id" filed in the json output above).
+
 The request types POST, PUT and DELETE are not yet finished and will currently result in an error.
